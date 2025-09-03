@@ -25,8 +25,10 @@ export const validateObject = <T extends z.ZodObject>(
   const validator = zobj.safeParse(obj);
   if (!validator.success) {
     //  error: {email: {errors: ['xxx']}}
+    console.log('🚀 validator - error:', validator.error);
     const error = z.treeifyError(validator.error)
       .properties as ValidError['error'];
+    console.log('🚀 ~ error:', error);
     for (const [prop, value] of Object.entries(obj)) {
       if (prop.startsWith('$')) continue;
       if (!error[prop]) error[prop] = { errors: [], value };

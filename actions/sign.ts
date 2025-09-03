@@ -46,7 +46,7 @@ export const regist = async (formData: FormData) => {
   }; // as z.infer<typeof zobj>;
   await prisma.member.create({ data });
 
-  await sendEmailByFetch(data, emailcheck);
+  await sendEmailByFetch({ ...data, emailType: 'Regist' });
   console.log('Mail has sent.');
 
   return { success: true, data } as ValidSuccess<typeof data>;
@@ -88,7 +88,6 @@ export async function authenticate(
   if (!validator.success) return validator;
   try {
     await signIn('credentials', formData);
-    // return validator;
   } catch (error) {
     console.log('🚀 sign.ts - authenticate - error:', error);
     if (error instanceof AuthError) {
@@ -118,8 +117,11 @@ export async function authenticate(
           passwd: { errors: [], value: validator.data.passwd },
         },
       } as ValidError;
+    } else {
+      // if (error !== null && typeof error === 'object' && 'digest' in error)
+      // console.log('XXX>>', error.digest);
+      throw error;
     }
-    // throw error;
   }
 }
 
@@ -158,9 +160,46 @@ export const sendEmailToResetPassword = async (
   redirect('/login/error?error=CheckResetPasswordEmail');
 };
 
+export const changePasswd = async (
+  _: ValidError | undefined,
+  formData: FormData
+) => {
+  // console.log('***>>', Object.fromEntries(formData.entries()));
+  const zobj = z
+    .object({
+      email: z.email(),
+      passwd: z.string().min(6, '패스워드는 6글자 이상만 가능합니다!'),
+      passwd2: z.string().min(6, '패스워드는 6글자 이상만 가능합니다!'),
+    })
+    .refine(({ passwd, passwd2 }) => passwd === passwd2, {
+      path: ['passwd2'],
+      message: '일치하지 않습니다!',
+    });
+
+  const validator = validate(zobj, formData);
+  if (!validator.success) {
+    return validator;
+  }
+
+  const { email } = validator.data;
+  const passwd = await hash(validator.data.passwd, 10);
+  await prisma.member.update({
+    where: { email },
+    data: { passwd, emailcheck: null },
+  });
+
+  redirect('/login/error?error=ChangedPassword&email=' + email);
+};
+
 export const logout = async () => {
   await signOut({ redirectTo: '/login' }); // QQQ ('/')
 };
 
 export const findMemberByEmail = async (email: string) =>
   prisma.member.findUnique({ where: { email } });
+
+export const findMemberByEmailcheck = async (emailcheck: string) =>
+  prisma.member.findFirst({
+    select: { email: true, nickname: true },
+    where: { emailcheck },
+  });

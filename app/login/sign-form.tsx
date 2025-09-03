@@ -3,6 +3,7 @@
 import { authenticate, regist } from '@/actions/sign';
 import { Button } from '@/components/ui/button';
 import LabelInput from '@/components/ui/label-input';
+import Link from 'next/link';
 import { redirect, useSearchParams } from 'next/navigation';
 import {
   FormEvent,
@@ -183,7 +184,7 @@ function LoginForm({ toggleLogin, email }: ToggleLoginProps) {
           />
           Remember me
         </label>
-        <a href='#'>Forgot password?</a>
+        <Link href='/passwdcheck'>Forgot password?</Link>
       </div>
       <Button type='submit' variant={'primary'} className='w-full'>
         Login with your account

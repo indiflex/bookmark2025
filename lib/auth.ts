@@ -98,10 +98,11 @@ export const {
         user.name = mbr.nickname;
         user.isadmin = mbr.isadmin;
         user.image = mbr.image;
-        return true;
+        // return true;
+        return '/bookcase';
       }
 
-      // if not exists ==> regist by SNS
+      // if mbr is not exists ==> regist by SNS
       const newMbr = await prisma.member.create({
         select: { id: true, nickname: true },
         data: {
