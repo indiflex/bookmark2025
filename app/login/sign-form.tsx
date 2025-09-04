@@ -19,9 +19,10 @@ import { ValidError } from '@/lib/validator';
 type ToggleLoginProps = {
   toggleLogin: () => void;
   email?: string | null;
+  callbackUrl?: string;
 };
 
-export default function SignForm() {
+export default function SignForm({ callbackUrl }: { callbackUrl: string }) {
   const [isLogin, toggleLogin] = useReducer((pre) => !pre, true);
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
@@ -29,7 +30,11 @@ export default function SignForm() {
   return (
     <>
       {isLogin ? (
-        <LoginForm toggleLogin={toggleLogin} email={email} />
+        <LoginForm
+          toggleLogin={toggleLogin}
+          email={email}
+          callbackUrl={callbackUrl}
+        />
       ) : (
         <RegistForm toggleLogin={toggleLogin} />
       )}
@@ -115,7 +120,7 @@ function RegistForm({ toggleLogin }: ToggleLoginProps) {
 
 const LOCALSTORAGE_EMAIL = 'savedEmail';
 
-function LoginForm({ toggleLogin, email }: ToggleLoginProps) {
+function LoginForm({ toggleLogin, email, callbackUrl }: ToggleLoginProps) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwdRef = useRef<HTMLInputElement>(null);
   const rememberMeRef = useRef<HTMLInputElement>(null);
@@ -136,6 +141,7 @@ function LoginForm({ toggleLogin, email }: ToggleLoginProps) {
 
   const makeLogin = async (formData: FormData) => {
     saveLocalStorage();
+    if (callbackUrl) formData.set('callbackUrl', callbackUrl);
     await loginAction(formData);
     console.log('**>>', validError);
   };

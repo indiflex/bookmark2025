@@ -98,8 +98,7 @@ export const {
         user.name = mbr.nickname;
         user.isadmin = mbr.isadmin;
         user.image = mbr.image;
-        // return true;
-        return '/bookcase';
+        return true;
       }
 
       // if mbr is not exists ==> regist by SNS

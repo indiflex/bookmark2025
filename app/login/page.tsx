@@ -2,11 +2,21 @@ import { GithubLoginButton } from '@/components/sign/github-login-button';
 import { GoogleLoginButton } from '@/components/sign/google-login-button';
 import { KakaoLoginButton } from '@/components/sign/kakao-login-button';
 import { NaverLoginButton } from '@/components/sign/naver-login-button';
+import { redirect } from 'next/navigation';
+import { use } from 'react';
+import { auth } from '@/lib/auth';
 import { BookImages, MarkImages, PeopleImages } from './images';
 import SignForm from './sign-form';
 import SoMany from './so-many';
 
-export default function Login() {
+export default function Login({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl: string }>;
+}) {
+  const { callbackUrl } = use(searchParams);
+  const session = use(auth());
+  if (session?.user.email) redirect('/my');
   return (
     <div className='grid place-items-center h-full'>
       <div className='flex [&>div]:p-4 rounded-lg shadow-md border overflow-hidden'>
@@ -26,11 +36,11 @@ export default function Login() {
             or
           </div>
           <div>
-            <SignForm />
+            <SignForm callbackUrl={callbackUrl} />
           </div>
         </div>
 
-        <div className='flex-1 bg-green-500 text-white flex items-center'>
+        <div className='flex-1 bg-green-500 text-white flex flex-col justify-around'>
           <div>
             <h1 className='text-3xl font-semibold'>
               Social BookMark, <br />
@@ -42,12 +52,12 @@ export default function Login() {
               explore a world of useful resources — all powered by this
               community
             </div>
+          </div>
 
-            <div className='space-y-3'>
-              <SoMany images={BookImages} howMany='50K+' remark='Books' />
-              <SoMany images={MarkImages} howMany='500K+' remark='Marks' />
-              <SoMany images={PeopleImages} howMany='100K+' remark='Users' />
-            </div>
+          <div className='space-y-3'>
+            <SoMany images={BookImages} howMany='50K+' remark='Books' />
+            <SoMany images={MarkImages} howMany='500K+' remark='Marks' />
+            <SoMany images={PeopleImages} howMany='100K+' remark='Users' />
           </div>
         </div>
       </div>

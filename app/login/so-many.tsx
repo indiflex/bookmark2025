@@ -9,7 +9,7 @@ type Props = {
 export default function SoMany({ images, howMany, remark }: Props) {
   return (
     <div className='flex items-center'>
-      <div className='flex'>
+      <div className='flex-1 flex'>
         {images.map(({ src, alt }, idx) => (
           <Img
             key={src}
@@ -19,7 +19,7 @@ export default function SoMany({ images, howMany, remark }: Props) {
           />
         ))}
       </div>
-      <div className='border-l-[1px] pl-5'>
+      <div className='flex-1 border-l-[1px] pl-5 text-right'>
         <strong>{howMany}</strong> {remark}
       </div>
     </div>

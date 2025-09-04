@@ -15,6 +15,10 @@ export const MarkImages = [
     src: 'https://lucide.dev/og.png',
     alt: 'lucide-react',
   },
+  {
+    src: 'https://yt3.googleusercontent.com/rY-y8dxesdjDAwzw0yNroEsKnUWBZymfwgr-iSyRTX8JYVy4XJqv0JwMFFLhBTOVaBxKolNPcQ=s900-c-k-c0x00ffffff-no-rj',
+    alt: 'youtube',
+  },
 ];
 
 export const BookImages = [

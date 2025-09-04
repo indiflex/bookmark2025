@@ -87,7 +87,12 @@ export async function authenticate(
   const validator = validate(zobj, formData);
   if (!validator.success) return validator;
   try {
-    await signIn('credentials', formData);
+    const callbackUrl = formData.get('callbackUrl') as string;
+    console.log('🚀 ~ callbackUrl:', callbackUrl);
+    await signIn('credentials', {
+      ...validator.data,
+      redirectTo: callbackUrl || '/bookcase',
+    });
   } catch (error) {
     console.log('🚀 sign.ts - authenticate - error:', error);
     if (error instanceof AuthError) {
@@ -192,7 +197,7 @@ export const changePasswd = async (
 };
 
 export const logout = async () => {
-  await signOut({ redirectTo: '/login' }); // QQQ ('/')
+  await signOut({ redirectTo: '/' });
 };
 
 export const findMemberByEmail = async (email: string) =>
